@@ -4,6 +4,7 @@ import org.springframework.stereotype.Service;
 
 import com.fag.lucasmartins.arquitetura_software.dto.ProdutoRequestDTO;
 import com.fag.lucasmartins.arquitetura_software.dto.ProdutoResponseDTO;
+import com.fag.lucasmartins.arquitetura_software.mapper.ProdutoMapper;
 import com.fag.lucasmartins.arquitetura_software.model.Produto;
 import com.fag.lucasmartins.arquitetura_software.repository.ProdutoRepository;
 
@@ -19,24 +20,13 @@ public class ProdutoServiceImpl implements ProdutoService {
     @Override
     public ProdutoResponseDTO cadastrarProduto(ProdutoRequestDTO dto) {
 
-        Produto produto = new Produto(
-                dto.getNome(),
-                dto.getEstoque(),
-                dto.getPreco()
-        );
+        Produto produto = ProdutoMapper.toEntity(dto);
 
         produto.validarProdutoPremium();
         produto.aplicarDesconto();
 
         repository.salvar(produto);
 
-        ProdutoResponseDTO response = new ProdutoResponseDTO();
-        response.setNome(produto.getNome());
-        response.setEstoque(produto.getEstoque());
-        response.setPreco(produto.getPreco());
-        response.setPrecoFinal(produto.getPrecoFinal());
-        response.setMensagem("Produto cadastrado com sucesso!");
-
-        return response;
+        return ProdutoMapper.toResponseDTO(produto);
     }
 }
